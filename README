@@ -1,0 +1,46 @@
+A very basic representation of the FRBR Group 1, 2, and 3 entities and the relationships between them.
+
+This library is not intended to provide the actual bibliographic attributes of the entities, just establish model and the relationships.
+
+Everything is defined as a Module that you would mixin into some other object.
+
+A basic example:
+
+class Story
+  attr_accessor :title
+end
+
+class Book
+  attr_accessor :language, format
+end
+  
+class BookEdition
+  attr_accessor :isbn, :date_published
+end
+
+class Person
+  attr_accessor :name
+ end
+  
+
+story = Story.new
+story.title = "The Old Man and the Sea"
+story.extend(FRBR::Work) # these modules could also be included directly in the class
+
+person = Person.new
+person.name = "Ernest Hemingway"
+person.extend(FRBR::Person)
+story.add_creator(person) # or person.add_creation(story)
+
+book = Book.new
+book.language = 'English'
+book.format = 'text'
+book.extend(FRBR::Expression)
+book.realization_of(story) # or story.add_realization(book)
+
+edition = BookEdition.new
+edition.isbn = '0099273969'
+edition.date_published = '2000'
+edition.extend(FRBR::Manifestation)
+edition.embodiment_of(book) # or book.add_embodiment(edition)
+
