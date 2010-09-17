@@ -6,6 +6,7 @@ Everything is defined as a Module that you would mixin into some other object.
 
 A basic example:
 
+# Set up our bibliographic objects that we want to FRBR-ize
 class Story
   attr_accessor :title
 end
