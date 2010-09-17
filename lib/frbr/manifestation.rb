@@ -27,10 +27,11 @@ module FRBR
     alias_method :is_manifestation_of, :is_embodiment_of
     
     def clear_embodiment_of
-      if @embodiment_of
-        e = @embodiment_of
+      if @embodiment_of && !@embodiment_of.nil?
+        if @embodiment_of.embodiments && @embodiment_of.embodiments.index(self)
+          @embodiment_of.remove_embodiment(self)
+        end
         @embodiment_of = nil
-        e.remove_embodiment(self) if e.embodiments.index(self)
       end
     end
     
