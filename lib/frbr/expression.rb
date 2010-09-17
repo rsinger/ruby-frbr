@@ -10,16 +10,17 @@ module FRBR
     def is_realization_of(work)
       raise ArgumentError, "Must be a realization of a work" unless work.is_a?(FRBR::Work)
       @realization_of = work
-      work.add_realization(self) unless work.realizations.index(self)
+      work.add_realization(self) unless work.realizations && work.realizations.index(self)
     end
     
     alias_method :is_expression_of, :is_realization_of
     
     def clear_realization_of
-      if @realization_of
-        w = @realization_of
+      if @realization_of && !@realization_of.nil? 
+        if @realization_of.realizations && @realization_of.realizations.index(self)
+          @realization_of.remove_realization(self) 
+        end
         @realization_of = nil
-        w.remove_realization(self) if w.realizations.index(self)
       end
     end
     
