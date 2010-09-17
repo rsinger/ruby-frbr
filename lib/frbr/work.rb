@@ -25,8 +25,8 @@ module FRBR
     def add_realization(expression)
       raise ArgumentError, "Only Expressions can be realizations" unless expression.is_a?(FRBR::Expression)
       @realizations ||= []
-      @realizations << expression unless @realizations.index(express)
-      expression.add_realization_of(self)
+      @realizations << expression unless @realizations.index(expression)
+      expression.is_realization_of(self)
     end
     
     alias_method :add_expression, :add_realization
@@ -77,8 +77,9 @@ module FRBR
     def self.add_method_aliases
       self.valid_relationships.to_a.flatten.each do |rel|
         next if rel == :related
-        alias_method "add_#{rel}".to_sym, :add_relationship
-        alias_method "remove_#{rel}".to_sym, :remove_relationship
+        alias_method "add_#{rel}".to_sym, :add_related
+        alias_method "remove_#{rel}".to_sym, :remove_related
+        alias_method rel, :related
       end
     end
   end

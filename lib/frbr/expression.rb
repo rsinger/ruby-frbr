@@ -4,8 +4,8 @@ module FRBR
     include FRBR::Group3
     attr_reader :realizers, :realization_of, :embodiments
     
-    alias :work, :realization_of
-    alias :manifestations, :embodiments
+    alias :work :realization_of
+    alias :manifestations :embodiments
     
     def is_realization_of(work)
       raise ArgumentError, "Must be a realization of a work" unless work.is_a?(FRBR::Work)
@@ -95,8 +95,9 @@ module FRBR
     def self.add_method_aliases
       self.valid_relationships.to_a.flatten.each do |rel|
         next if rel == :related
-        alias_method "add_#{rel}".to_sym, :add_relationship
-        alias_method "remove_#{rel}".to_sym, :remove_relationship
+        alias_method "add_#{rel}".to_sym, :add_related
+        alias_method "remove_#{rel}".to_sym, :remove_related
+        alias_method rel, :related        
       end
     end   
   end

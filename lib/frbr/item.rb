@@ -2,7 +2,8 @@ module FRBR
   module Item
     include FRBR::Group1
     include FRBR::Group3
-    attr_reader :exemplar_of, :owners :equivalents
+    attr_reader :exemplar_of, :owners
+    alias :manifestation :exemplar_of
     
     def equivalents
       equivalents = []
@@ -77,8 +78,9 @@ module FRBR
     def self.add_method_aliases
       self.valid_relationships.to_a.flatten.each do |rel|
         next if rel == :related
-        alias_method "add_#{rel}".to_sym, :add_relationship
-        alias_method "remove_#{rel}".to_sym, :remove_relationship
+        alias_method "add_#{rel}".to_sym, :add_related
+        alias_method "remove_#{rel}".to_sym, :remove_related
+        alias_method rel, :related        
       end
     end   
   end

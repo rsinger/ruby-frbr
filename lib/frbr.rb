@@ -1,8 +1,4 @@
 require File.dirname(__FILE__) + '/frbr/groups'
-require File.dirname(__FILE__) + '/frbr/work'
-require File.dirname(__FILE__) + '/frbr/expression'
-require File.dirname(__FILE__) + '/frbr/manifestation'
-require File.dirname(__FILE__) + '/frbr/item'
 require File.dirname(__FILE__) + '/frbr/concept'
 require File.dirname(__FILE__) + '/frbr/corporate_body'
 require File.dirname(__FILE__) + '/frbr/event'
@@ -10,6 +6,11 @@ require File.dirname(__FILE__) + '/frbr/family'
 require File.dirname(__FILE__) + '/frbr/object'
 require File.dirname(__FILE__) + '/frbr/person'
 require File.dirname(__FILE__) + '/frbr/place'
+require File.dirname(__FILE__) + '/frbr/work'
+require File.dirname(__FILE__) + '/frbr/expression'
+require File.dirname(__FILE__) + '/frbr/manifestation'
+require File.dirname(__FILE__) + '/frbr/item'
+
 
 module Kernel
   def self.constant(const)

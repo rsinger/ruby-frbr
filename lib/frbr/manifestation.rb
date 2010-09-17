@@ -4,8 +4,8 @@ module FRBR
     include FRBR::Group3
     attr_reader :producers, :embodiment_of, :exemplars
     
-    alias :expression, :embodiment_of
-    alias :items, :exemplars
+    alias :expression :embodiment_of
+    alias :items :exemplars
     
     def equivalents
       equivalents = []
@@ -37,7 +37,7 @@ module FRBR
     alias_method :clear_manifestation_of, :clear_embodiment_of
     
     def add_exemplar(item)
-      raise ArgumentError "Exemplar must an item" unles item.is_a?(FRBR::Item)
+      raise ArgumentError "Exemplar must an item" unless item.is_a?(FRBR::Item)
       @exemplars ||= []
       @exemplars << item unless @exemplars.index(item)
       item.is_exemplar_of(self)
@@ -96,8 +96,9 @@ module FRBR
     def self.add_method_aliases
       self.valid_relationships.to_a.flatten.each do |rel|
         next if rel == :related
-        alias_method "add_#{rel}".to_sym, :add_relationship
-        alias_method "remove_#{rel}".to_sym, :remove_relationship
+        alias_method "add_#{rel}".to_sym, :add_related
+        alias_method "remove_#{rel}".to_sym, :remove_related
+        alias_method rel, :related        
       end
     end    
   end

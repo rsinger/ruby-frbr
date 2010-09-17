@@ -1,13 +1,23 @@
 module FRBR
   module Group1
+    attr_reader :relationships
     def self.check_frbr_validity(o, mod_name)
       raise TypeError, "Group 1 entities cannot also be Group 2 entities" if o.is_a?(FRBR::Group2)
-      entities = [FRBR::Work, FRBR::Expression, FRBR::Manifestation, FRBR::Item, FRBR::Concept, FRBR::Event, FRBR::Object, FRBR::Place]
-      entities.delete(Kernel.constant(mod_name))
-      entities.each do |e|
-        raise TypeError, "#{mod_name} cannot also be a #{e.to_s}" if o.is_a?(e)
+      unless mod_name == "FRBR::Group1"
+        entities = [FRBR::Work, FRBR::Expression, FRBR::Manifestation, FRBR::Item, FRBR::Concept, FRBR::Event, FRBR::Object, FRBR::Place]
+        entities.delete(Kernel.constant(mod_name))
+        entities.each do |e|
+          raise TypeError, "#{mod_name} cannot also be a #{e.to_s}" if o.is_a?(e)
+        end
+      end
+      [FRBR::Concept, FRBR::Event, FRBR::Object, FRBR::Place].each do |subject|
+        raise TypeError, "#{subject} cannot be a Group 1 entity" if o.is_a?(subject)
       end
     end
+    
+    def related
+      return @relationships[this_method.to_sym]
+    end    
           
     protected
     def add_relationship_to_entity(entity, relationship, entity_type, reify)
@@ -15,9 +25,9 @@ module FRBR
         raise ArgumentError, "relationship must be one of: #{entity_type.valid_relationships.to_a.flatten.join(", ")}"
       end
       raise ArgumentError, "Relationship must be to another #{entity_type}" unless entity.is_a?(entity_type)
-      @related_works ||= {}
-      @related_works[relationship] ||= []
-      @related_works[relationship] << entity unless @related_works[relationship].index(entity)      
+      @relationships ||={}
+      @relationships[relationship] ||= []
+      @relationships[relationship] << entity unless @relationships[relationship].index(entity)      
       if reify
         if entity_type.valid_relationships[relationship]
           entity.add_relationship_to_entity(self, entity_type.valid_relationships[relationship], entity_type, false)
@@ -27,8 +37,8 @@ module FRBR
       end
     end      
     
-    def remove_relationship_from_entity(entity, relationship, reify)
-      @related_works[relationship].delete(entity) if @related_works && @related_works[relationship]
+    def remove_relationship_from_entity(entity, relationship, entity_type, reify)
+      @relationships[relationship].delete(entity) if @relationships && @relationships[relationship]
       if reify
         if entity_type.valid_relationships[relationship]
           entity.remove_relationship_from_entity(self, entity_type.valid_relationships[relationship], entity_type, false)
@@ -38,6 +48,10 @@ module FRBR
       end        
     end
     
+    def self.extended(o)
+      self.check_frbr_validity(o, self.name)
+    end    
+    
     def this_method
       caller[0]=~/`(.*?)'/
       $1
@@ -45,6 +59,24 @@ module FRBR
   end
   module Group2
     attr_reader :created, :realized, :produced, :owner_of, :related_agents
+    
+    def self.check_frbr_validity(o, mod_name)
+      raise TypeError, "Group 2 entities cannot also be Group 1 entities" if o.is_a?(FRBR::Group1)
+      unless mod_name == "FRBR::Group2"
+        entities = [FRBR::Person, FRBR::CorporateBody, FRBR::Family, FRBR::Concept, FRBR::Event, FRBR::Object, FRBR::Place]
+        entities.delete(Kernel.constant(mod_name))
+        entities.each do |e|
+          raise TypeError, "#{mod_name} cannot also be a #{e.to_s}" if o.is_a?(e)
+        end
+      end
+      [FRBR::Concept, FRBR::Event, FRBR::Object, FRBR::Place].each do |subject|
+        raise TypeError, "#{subject} cannot be a Group 2 entity" if o.is_a?(subject)
+      end
+    end
+    
+    def self.extended(o)
+      self.check_frbr_validity(o, self.name)
+    end    
     
     def creator_of?(thing)
       return true if @created && @created.index(thing)
@@ -128,6 +160,20 @@ module FRBR
   end
   module Group3
     attr_reader :subject_of, :related_subjects
+    
+    def self.check_frbr_validity(o, mod_name)
+
+      unless mod_name == "FRBR::Group3"
+        entities = [FRBR::Work, FRBR::Expression, FRBR::Manifestation, FRBR::Item,
+          FRBR::Person, FRBR::CorporateBody, FRBR::Family, 
+          FRBR::Concept, FRBR::Event, FRBR::Object, FRBR::Place]
+        entities.delete(Kernel.constant(mod_name))
+        entities.each do |e|
+          raise TypeError, "#{mod_name} cannot also be a #{e.to_s}" if o.is_a?(e)
+        end
+      end
+    end
+        
     def add_subject_of(work)
       raise ArgumentError, "Group 3 entities can only be subjects of Works" unless work.is_a?(FRBR::Work)
       @subject_of ||= []
