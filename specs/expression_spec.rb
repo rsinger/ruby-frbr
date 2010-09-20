@@ -161,7 +161,7 @@ describe "A FRBR Expression" do
     manifestation.embodiment_of.should ==(expression)
   end
   
-  it "should be able to remove an manifestation" do
+  it "should be able to remove a manifestation" do
     expression = Object.new
     expression.extend(FRBR::Expression)
     expression.embodiments.should be_nil 
@@ -197,7 +197,7 @@ describe "A FRBR Expression" do
   it "should only allow works to be added as realizations_of" do
     expression = Object.new
     expression.extend(FRBR::Expression)
-    expression.embodiments.should be_nil 
+    expression.realization_of.should be_nil 
     item = Object.new
     item.extend(FRBR::Item)    
     lambda { expression.is_realization_of(item) }.should raise_exception(ArgumentError)    

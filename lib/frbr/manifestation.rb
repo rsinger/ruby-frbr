@@ -21,7 +21,7 @@ module FRBR
     def is_embodiment_of(expression)      
       raise ArgumentError, "Must be the embodiment of an expression" unless expression.is_a?(FRBR::Expression)
       @embodiment_of = expression
-      expression.add_embodiment(self) unless expression.embodiments.index(self)
+      expression.add_embodiment(self) unless expression.embodiments && expression.embodiments.index(self)
     end
     
     alias_method :is_manifestation_of, :is_embodiment_of
@@ -38,7 +38,7 @@ module FRBR
     alias_method :clear_manifestation_of, :clear_embodiment_of
     
     def add_exemplar(item)
-      raise ArgumentError "Exemplar must an item" unless item.is_a?(FRBR::Item)
+      raise ArgumentError, "Exemplar must an item" unless item.is_a?(FRBR::Item)
       @exemplars ||= []
       @exemplars << item unless @exemplars.index(item)
       item.is_exemplar_of(self)

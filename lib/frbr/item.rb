@@ -24,7 +24,7 @@ module FRBR
     
     alias_method :is_item_of, :is_exemplar_of
     
-    def clear_exemplar_of(manifestation)
+    def clear_exemplar_of
       if @exemplar_of && !@exemplar_of.nil?
         if @exemplar_of.exemplars && @exemplar_of.exemplars.index(self)
           @exemplar_of.remove_exemplar(self)
