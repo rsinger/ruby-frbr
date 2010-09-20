@@ -42,12 +42,12 @@ module FRBR
       raise ArgumentError, "Subject must be a Group 3 entity" unless subject.is_a?(FRBR::Group3)
       @subjects ||= []
       @subjects << subject
-      subject.add_subject_of(self) unless subject.subject_of.index(self)
+      subject.add_subject_of(self) unless subject.subject_of && subject.subject_of.index(self)
     end
     
     def remove_subject(subject)
       @subjects.delete(subject) if @subjects
-      subject.remove_subject_of(self) if subject.subject_of.index(self)
+      subject.remove_subject_of(self) if subject.subject_of && subject.subject_of.index(self)
     end    
     
     def add_related(work)

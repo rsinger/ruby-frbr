@@ -138,7 +138,7 @@ module FRBR
       raise ArgumentError, "Only Items can be owned" unless item.is_a?(FRBR::Item)
       @owner_of ||= []
       @owner_of << item unless @owner_of.index(item)
-      item.add_owned_by(self) unless item.has_owner?(self)
+      item.add_owner(self) unless item.has_owner?(self)
     end
     
     def remove_ownership(item)
@@ -150,12 +150,12 @@ module FRBR
       raise ArgumentError, "Related agents must be Group 2 entities" unless agent.is_a?(FRBR::Group2)
       @related_agents ||=[]
       @related_agents << agent unless @related_agents.index(agent)
-      agent.add_related_agent(self) unless agent.related_agents.index(self)
+      agent.add_related_agent(self) unless agent.related_agents && agent.related_agents.index(self)
     end
     
     def remove_related_agent(agent)
       @related_agents.delete(agent) if @related_agents
-      agent.remove_related_agent(self) if agent.related_agents.index(self)
+      agent.remove_related_agent(self) if agent.related_agents && agent.related_agents.index(self)
     end
   end
   module Group3
@@ -178,23 +178,26 @@ module FRBR
       raise ArgumentError, "Group 3 entities can only be subjects of Works" unless work.is_a?(FRBR::Work)
       @subject_of ||= []
       @subject_of << work unless @subject_of.index(work)
-      work.add_subject(self) unless work.subjects.index(self)
+      work.add_subject(self) unless work.subjects && work.subjects.index(self)
     end
     
     def remove_subject_of(work)
       return unless @subject_of
-      @subject_of.delete(work)
+      @subject_of.delete(work) if @subject_of && @subject_of.index(work)
+      work.remove_subject(self) if work.subjects && work.subjects.index(self)
     end
     
     def add_related_subject(thing)
       raise ArgumentError, "Group 3 entities can only be related to other Group 3 entities" unless thing.is_a?(FRBR::Group3)
       @related_subjects ||= []
-      @related_subjects << thing
+      @related_subjects << thing unless @related_subjects && @related_subjects.index(thing)
+      thing.add_related_subject(self) unless thing.related_subjects && thing.related_subjects.index(self)
     end
     
     def remove_related_subject(thing)
       return unless @related_subjects
       @related_subjects.delete(thing)
+      thing.remove_related_subject(self) if thing.related_subjects && thing.related_subjects.index(self)
     end      
   end
 end
