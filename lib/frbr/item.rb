@@ -19,7 +19,7 @@ module FRBR
     def is_exemplar_of(manifestation)  
       raise ArgumentError, "Must be the exemplar of a manifestation" unless manifestation.is_a?(FRBR::Manifestation)
       @exemplar_of = manifestation
-      manifestation.add_exemplar(self) unless manifestation.exemplars.index(self)
+      manifestation.add_exemplar(self) unless manifestation.exemplars && manifestation.exemplars.index(self)
     end
     
     alias_method :is_item_of, :is_exemplar_of
@@ -49,7 +49,7 @@ module FRBR
     
     def remove_owner(owner)
       @owners.delete(owner)
-      owner.remove_owner(self) if owner.owner_of(self)
+      owner.remove_ownership(self) if owner.owner_of?(self)
     end
         
     def add_related(expression)

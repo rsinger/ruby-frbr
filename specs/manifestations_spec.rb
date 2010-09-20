@@ -23,7 +23,7 @@ describe "A FRBR Manifestation" do
     manifestation = Object.new
     manifestation.extend(FRBR::Manifestation)
     [FRBR::Expression, FRBR::Expression, FRBR::Item].each do |wei|
-      lambda { manifestation.extend(wmi) }.should raise_exception
+      lambda { manifestation.extend(wei) }.should raise_exception
     end
     
     [FRBR::Person, FRBR::CorporateBody, FRBR::Family].each do |agent|
